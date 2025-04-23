@@ -5,6 +5,7 @@ const port = 8000;
 
 // importando rotas
 const especialidadeRoutes = require("./src/routes/especialidadeRoutes");
+const usuarioRoutes = require("./src/routes/usuarioRoutes");
 
 
 // middlewares = interceptadores
@@ -21,6 +22,7 @@ app.get("/boas-vindas", (req, res) => {
 });
 
 app.use("/especialidades", especialidadeRoutes);
+app.use("/usuarios", usuarioRoutes);
 
 app.get("/boas-vindas/:nome", (req, res) => {
     res.send(`Seja bem-vindo ${req.params.nome}`);
