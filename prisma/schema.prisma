@@ -103,7 +103,7 @@ model status {
 
 model usuarios {
   usuario_id    Int    @id @unique(map: "usuario_id") @default(autoincrement())
-  usuario_nome  String @db.VarChar(20)
-  usuario_email String @db.VarChar(50)
-  usuario_senha String @db.VarChar(50)
+  usuario_nome  String? @db.VarChar(20)
+  usuario_email String @db.VarChar(50) @unique
+  usuario_senha String @db.VarChar(255)
 }

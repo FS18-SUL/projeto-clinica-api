@@ -1,11 +1,25 @@
-const { PrismaClient } = require("../generated/prisma");
+const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
+const bcrypt = require("bcrypt");
 
 async function criarUsuario(dados){
     try {
+        let senhaCriptografada = await bcrypt.hash(dados.usuario_senha, 10);
+        dados = {...dados, usuario_senha: senhaCriptografada};
+        const checarEmail = await prisma.usuarios.count({
+            where:{
+                usuario_email: dados.usuario_email
+            }
+        })
+
+        if(checarEmail > 0){
+            throw new Error("Este email já está cadastrado!")
+        }
+
         const request = await prisma.usuarios.create({
             data: dados
         })
+
         if(request){
             return {
                 type: "success",
@@ -22,9 +36,39 @@ async function criarUsuario(dados){
             message: error.message
         }
     }
-    
+}
+
+async function login(dados){
+    try {
+
+        const usuario = await prisma.usuarios.findFirst({
+            where: {
+                usuario_email: dados.usuario_email
+            }
+        })
+
+        const logado = await bcrypt.compare(dados.usuario_senha, usuario.usuario_senha);
+
+        if(logado){
+            return {
+                type: "success",
+                message: "Usuario logado!"
+            }
+        }else{
+            return {
+                type: "warning",
+                message: "Email ou senha incorretos"
+            }
+        }
+    } catch (error) {
+        return {
+            type: "error",
+            message: error.message
+        }
+    }
 }
 
 module.exports = {
-    criarUsuario
+    criarUsuario,
+    login
 }
