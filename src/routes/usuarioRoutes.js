@@ -1,8 +1,9 @@
 const { criarUsuario, login } = require('../controllers/usuarioController');
+const { safeMode } = require('../utils');
 
 const router = require('express').Router();
 
-router.post("/", async (req, res) => {
+router.post("/", safeMode, async (req, res) => {
     res.send(await criarUsuario(req.body));
 })
 
